@@ -1,0 +1,24 @@
+.sidebar-lp{
+    background-color: #202020;
+    color: #bebebe;
+    padding: 10px 12px;
+    border-bottom: 2px solid #101010;
+    user-select: none;
+}
+
+.sidebar-lp:hover:not(.sidebar-lp-active){
+    background-color: #303030;
+    transition: 0.2s;
+    color:#ccc;
+}
+
+.sidebar-lp-active{
+    background-color: rgb(0, 166, 255);
+    color:white;
+    border:none;
+}
+
+.sidebar-lp-active:hover{
+    background-color: rgb(9, 198, 255);
+
+}

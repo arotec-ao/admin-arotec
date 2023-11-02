@@ -1,0 +1,23 @@
+
+.sidebar-lp-group-button{
+    background-color: #202020;
+    color: #bebebe;
+    padding: 10px 12px;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+
+.sidebar-lp-group-arrow{
+    margin-left: auto;
+
+}
+
+.sidebar-lp-group-options{
+    display: flex;
+    flex-direction: column;
+
+margin-left: 15px;
+opacity: 0.5;
+}
+

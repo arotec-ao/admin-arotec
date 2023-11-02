@@ -1,0 +1,126 @@
+.modal{
+    background:white;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0px 0px 5px rgba(0, 0,0,0.05);
+    position: fixed;
+    width: 450px;
+    max-width: 100%;
+    left:50%;
+   top:20px;
+    transform:translateX(-50%);
+    display: none;
+}
+
+.modal-show{
+    display: block;
+animation: modal_show 0.6s forwards;
+}
+
+.modal-header{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #eee;
+}
+
+.modal-header-title{
+    font-weight: bold;
+}
+
+.modal-btn-close{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 25px;
+    height: 25px;
+    background-color: #f70000;
+    border-radius: 50%;
+    cursor: pointer;
+    margin-left: auto;
+}
+
+
+.modal-btn-close:hover{
+    background-color:#ec0000;
+}
+
+/*Externos Elementos*/
+
+.btn-delete-in-modal{
+    display: flex;
+    align-items: center;
+    gap:6px;
+    background-color: #f70000;
+    padding: 4px 8px;
+    border-radius: 12px;
+    cursor: pointer;
+    color:white;
+}
+
+.btn-delete-in-modal:hover{
+    background-color:#ec0000;
+}
+
+.modal-content{
+    padding: 20px 15px;
+}
+
+/*Elementos*/
+
+.modal-input-group{
+    display:flex;
+    flex-direction: column;
+    gap:10px;
+    margin-bottom: 15px;
+}
+
+.modal-input-group:last-child{
+    margin-bottom: 0px;
+}
+
+.modal-input{
+    background-color: #eee;
+    padding: 10px;
+    border-radius: 6px;
+}
+
+.modal-footer{
+    padding-top:15px;
+    border-top: 1px solid #eee;
+}
+
+.modal-btn-submit
+{
+    background-color: rgb(0, 85, 255);
+    padding: 6px 8px;
+    border-radius: 6px;
+    cursor: pointer;
+    color:white;
+    display: block;
+    width: fit-content;
+    margin-left:auto;
+}
+
+/*Animations */
+@keyframes modal_show{
+    /* Animation Enter
+    from {
+        top: -10px;
+        transform:translate(-50%, -100%);
+    }
+    to{
+        top: 10px;
+        transform:translate(-50%, 0px);
+    }
+    */
+
+    from{
+        opacity: 0;
+    }
+
+    to{
+        opacity: 1;
+    }
+}

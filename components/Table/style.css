@@ -1,0 +1,81 @@
+
+:root{
+    /*--color_borda_table:rgb(0, 8, 59);*/
+    --color_borda_table:#252525;
+
+}
+
+/*Root Table*/
+.table{
+    border:none;
+    border-spacing: 0;
+    border-radius: 8px;
+    font-size: 14px;
+    overflow: hidden;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.08);
+}
+
+
+.table-header{
+    background-color:  var(--color_borda_table);
+    color:white;
+}
+
+
+/* Dando espaço entre as colunas*/
+
+.table-header .table-column{
+    padding: 10px 20px;
+}
+
+/* Remove por temos estilos melhorados (mas vou manter ainda o estilo, quem sabe no 
+futuro) */
+
+/*Aplicando as bordas laterais da forma correcta  */
+
+/*
+.table-body .table-row .table-column:first-child{
+    border-left: 2px solid var(--color_borda_table);
+}
+
+.table-body .table-row .table-column:last-child{
+    border-right: 2px solid var(--color_borda_table);
+}
+*/
+
+/* Ajustes nas bordas de baixo (com border-radius) */
+/*
+.table-body .table-row:last-child .table-column:first-child{
+    border-radius:0px 0px 0px 8px;
+}
+
+.table-body .table-row:last-child .table-column:last-child{
+    border-radius:0px 0px 8px 0px;
+
+}
+*/
+/* Aplicando as bordas de baixo  */
+
+/*
+.table-body .table-row:last-child .table-column{
+    border-bottom: 2px solid  var(--color_borda_table);
+}
+
+
+*/
+
+.table-body .table-row{
+    cursor: pointer;
+}
+
+.table-body .table-row:hover{
+    color:#6f6f6f;
+}
+.table-body .table-column{
+    padding: 10px 20px;
+}
+
+/* Efeitos */
+.table .table-body .table-row:nth-child(even) .table-column{
+    background:rgb(249, 249, 249);
+}

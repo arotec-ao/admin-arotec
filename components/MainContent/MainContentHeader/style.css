@@ -1,0 +1,35 @@
+.mc-header{
+    margin-bottom: 50px;
+    display: flex;
+    align-items: center;
+}
+
+.mc-header-title{
+    font-size:1.8em;
+    font-weight: bold;
+}
+
+.mc-header-right{
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.mc-header-btn-exit{
+    
+    border-radius: 50%;
+    background:rgb(255, 128, 139);
+    cursor:pointer;  
+    position: relative;  
+    width: 30px;
+    height:30px;
+}
+
+.mc-header-image-exit{
+    position: absolute;
+    top:50%;
+    left:50%;
+    transform: translate(-50%, -50%);
+}
+

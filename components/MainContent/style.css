@@ -1,0 +1,82 @@
+.main-content{
+    padding:40px  40px 20px 40px;
+    width: 0px;
+    flex: 1;
+}
+
+.table-area{
+    margin-bottom: 20px;
+    overflow: auto;
+
+}
+
+.table-real{
+    max-height: 400px;
+    overflow: auto;
+}
+
+.table-area-title{
+    font-weight: bold;
+    margin-bottom: 20px;
+    font-size: 1.3em;
+}
+
+.table-area-header{
+    margin-bottom: 20px;
+    display:flex;
+    align-items: center;
+    gap:10px;
+}
+
+.btn-table{
+    padding:  8px 14px;
+    cursor: pointer;
+    color:white;
+    border-radius: 8px;
+    transition: all 0.4s;
+    display: flex;
+    align-items: center;
+    gap:6px;
+
+}
+
+.btn-table:hover{
+    transition: all 0.4s;
+}
+
+
+.btn-table-add{
+    background-color:  rgb(0, 85, 255);
+}
+.btn-table-add:hover{
+    background-color:  rgb(0, 78, 233);
+}
+
+.btn-table-export{
+    margin-left: auto;
+    background-color: #00cd0e;
+}
+
+.btn-table-export:hover{
+    background-color: #01bf0d;
+}
+
+.btn-collapse-sidebar{
+background-color: transparent;
+padding:4px 6px;
+border-radius: 6px;
+border: 1px solid #eee;
+margin-right: 10px;
+cursor: pointer;
+display: none;
+}
+
+
+@media (max-width: 750px){
+    .btn-collapse-sidebar{
+        display: block;
+    }
+    .table-real{
+        min-height: 750px;
+    }
+}

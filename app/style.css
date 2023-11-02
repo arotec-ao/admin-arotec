@@ -1,0 +1,11 @@
+.cards-dashboard-container{
+    display: flex;  
+    flex-wrap: wrap;
+    gap: 30px 25px; 
+}
+
+@media (max-width:750px){
+    .cards-dashboard-container{
+        justify-content: center;
+    }
+}

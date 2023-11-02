@@ -1,0 +1,25 @@
+.mg-bottom-15{
+    margin-bottom: 15px;
+}
+
+.mg-bottom-20{
+    margin-bottom: 20px;
+}
+
+.mg-bottom-40{
+    margin-bottom: 40px;
+}
+
+.text-center{
+text-align: center;
+}
+
+.block{
+    display: block;
+}
+.d-flex{
+    display:flex;
+}
+.gp-10{
+gap:10px;
+}
