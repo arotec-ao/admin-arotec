@@ -15,7 +15,7 @@ import ModalInput from '@/components/Modal/Input';
 
 import { useState } from 'react';
 
-import { modalFormAction, deleteDocAction } from '@/app/actions';
+import { modalFormAction, deleteDocAction, deleteDocsAction } from '@/app/actions';
 import { exportDataExcel } from '@/utils/excel';
 
 interface PlayersContentProps {
@@ -31,6 +31,10 @@ export default function PlayersContent({ players }: PlayersContentProps) {
     
     //ID do documento (elemento) que está ser atualizado no modal
     const [docId, setDocId] = useState<string | null>(null);
+    
+    //Documentos selecionados para deletar
+    const [docsSelected, setDocsSelected] = useState<string[]>([]);
+
     const [modalData, setModalData]= useState({
         nome:'', 
         pais:'', 
@@ -56,6 +60,30 @@ export default function PlayersContent({ players }: PlayersContentProps) {
             iso: doc?.data.iso, 
             pontos: doc?.data.pontos, 
         })
+    }
+
+    const selectItem = (id: string) => {
+
+        if (docsSelected.includes(id)) {
+            setDocsSelected(docsSelected.filter((doc) => {
+                if (doc == id) return false;
+                return true;
+            }));
+        }
+        else {
+            setDocsSelected([...docsSelected, id]);
+        }
+
+    }
+    const selectAllToogle = () => {
+        if (docsSelected.length == players.length) {
+            setDocsSelected([]);
+        }
+        else {
+            setDocsSelected(players.map((player) => {
+                return player.id;
+            }))
+        }
     }
 
     const openModal = () => {
@@ -90,6 +118,9 @@ export default function PlayersContent({ players }: PlayersContentProps) {
     const tableData: TableData = {
         labels: ['Nome', 'País', 'ISO', 'Pontos'],
         onClickRow: clickItem,
+        onSelectRow: selectItem,
+        onSelectToogleAll: selectAllToogle,
+        selecteds: docsSelected,
 
         rows: players.map((player) => {
             const data = player.data;
@@ -111,6 +142,25 @@ export default function PlayersContent({ players }: PlayersContentProps) {
         <div className='table-area'>
             <div className='table-area-title'></div>
             <div className='table-area-header'>
+            <form action={async (data: FormData) => {
+                        await deleteDocsAction(data);
+                        setDocsSelected([]);
+                    }} onSubmit={() => {
+                        setShowModal(false);
+                    }}>
+                        <input type="hidden" name='redirect_url' value='/players' />
+                        <input type="hidden" name='collection' value='players' />
+
+                        <input type="hidden" name="docs" value={docsSelected.length > 0 ? docsSelected.reduce((previous, value) => {
+                            return previous + ' ' + value;
+                        }) : ''} />
+                        <button className="btn-table btn-table-delete-item"
+                            disabled={docsSelected.length == 0 ? true : false}>
+                            <Image src='/icons/trash.png' width='20' height='20' alt='' />
+                            Apagar Itens
+                        </button>
+            </form>
+                    
                 <button className="btn-table btn-table-add" onClick={openModal}>
                     <Image src='/icons/add.png' width='20' height='20' alt='' />
                     Adicionar

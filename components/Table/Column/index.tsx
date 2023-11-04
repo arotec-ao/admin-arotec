@@ -1,9 +1,9 @@
 interface TableColumnProps{
-    children: React.ReactNode,
+    children?: React.ReactNode,
     header?:boolean, 
 }
 
-export default function TableColumn({children, header=false}: TableColumnProps){
+export default function TableColumn({children='', header=false}: TableColumnProps){
 
     if (header){
         return (

@@ -1,7 +1,7 @@
 import Image from 'next/image';
 
 //Tabela 
-import { generateTable } from '@/components/Table';
+import { generateTable , TableData} from '@/components/Table';
 
 //Modal
 import Modal from '@/components/Modal';
@@ -12,7 +12,7 @@ import ModalInput from '@/components/Modal/Input';
 
 import { useState } from 'react';
 
-import { elementEquipeAction , deleteElementEquipeAction} from '@/app/actions';
+import { elementEquipeAction , deleteElementEquipeAction, deleteElementsEquipeAction} from '@/app/actions';
 import { exportDataExcel } from '@/utils/excel';
 
 interface EquipeAreaProps {
@@ -47,6 +47,10 @@ export default function EquipeArea({ equipe, onEditarEquipe }: EquipeAreaProps) 
 
     //ID do elemento do grupo que está ser atualizado no modal
     const [elementId, setElementId] = useState<string | null>(null);
+   
+    //Elementos selecionados para deletar
+    const [elementsSelected, setElementsSelected] = useState<string[]>([]);
+
     const [modalData, setModalData] = useState({
         nome: '',
         funcao: '',
@@ -70,6 +74,30 @@ export default function EquipeArea({ equipe, onEditarEquipe }: EquipeAreaProps) 
             funcao: elemento?.funcao ?? '',
             nascimento: elemento?.nascimento ?? '',
         })
+    }
+
+    const selectItem = (id: string) => {
+
+        if (elementsSelected.includes(id)) {
+            setElementsSelected(elementsSelected.filter((element) => {
+                if (element == id) return false;
+                return true;
+            }));
+        }
+        else {
+            setElementsSelected([...elementsSelected, id]);
+        }
+
+    }
+    const selectAllToogle = () => {
+        if (elementsSelected.length == elementos.length) {
+            setElementsSelected([]);
+        }
+        else {
+            setElementsSelected(elementos.map((elemento) => {
+                return elemento.id;
+            }))
+        }
     }
 
     const openModal = () => {
@@ -110,6 +138,24 @@ export default function EquipeArea({ equipe, onEditarEquipe }: EquipeAreaProps) 
         }, 'Equipe ' + data.nomeTeam, 'equipes-canar');
     }
 
+    const tableData: TableData = {
+        labels: ['Nome Completo', 'Função', 'Data de nascimento'],
+        onClickRow: clickItem,
+        onSelectRow: selectItem,
+        onSelectToogleAll: selectAllToogle,
+        selecteds: elementsSelected,
+        rows: elementos.map((elemento) => {
+            return {
+                id: elemento.id,
+                columns_data: [
+                    elemento.nome.toString(),
+                    elemento.funcao.toString(),
+                    elemento.nascimento.toString(),
+                ]
+            }
+        })
+    }
+
     return (
         <div className='equipe-area'>
             <div className='table-area'>
@@ -122,6 +168,27 @@ export default function EquipeArea({ equipe, onEditarEquipe }: EquipeAreaProps) 
                 <div className='mg-bottom-15'>Telefone da equipa: {data.telefone}</div>
                 <div className='mg-bottom-15'>Nome da instituição: {data.nomeInstituicao}</div>
                 <div className='table-area-header'>
+                    
+                <form action={async (data: FormData) => {
+                        await deleteElementsEquipeAction(data);
+                        setElementsSelected([]);
+                    }} onSubmit={() => {
+                        setShowModal(false);
+                    }}>
+                        <input type="hidden" name='redirect_url' value='/equipes-canar' />
+                        <input type="hidden" name='collection' value='equipes' />
+                        <input type="hidden" name="docId" value={equipe.id} />
+
+                        <input type="hidden" name="elements" value={elementsSelected.length > 0 ? elementsSelected.reduce((previous, value) => {
+                            return previous + ' ' + value;
+                        }) : ''} />
+                        <button className="btn-table btn-table-delete-item"
+                            disabled={elementsSelected.length == 0 ? true : false}>
+                            <Image src='/icons/trash.png' width='20' height='20' alt='' />
+                            Apagar Itens
+                        </button>
+                    </form>
+                    
                     <button className="btn-table btn-table-add" onClick={openModal}>
                         <Image src='/icons/add.png' width='20' height='20' alt='' />
                         Adicionar Elemento
@@ -132,20 +199,7 @@ export default function EquipeArea({ equipe, onEditarEquipe }: EquipeAreaProps) 
                     </button>
                 </div>
                 <div className='table-real'>
-                    {generateTable({
-                        labels: ['Nome Completo', 'Função', 'Data de nascimento'],
-                        onClickRow: clickItem,
-                        rows: elementos.map((elemento) => {
-                            return {
-                                id: elemento.id,
-                                columns_data: [
-                                    elemento.nome.toString(),
-                                    elemento.funcao.toString(),
-                                    elemento.nascimento.toString(),
-                                ]
-                            }
-                        })
-                    })}
+                    {generateTable(tableData)}
                 </div>
             </div>
 

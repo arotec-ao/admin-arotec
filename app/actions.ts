@@ -194,6 +194,21 @@ export async function deleteDocAction(formData: FormData) {
 
 }
 
+export async function deleteDocsAction(formData: FormData){
+        const collection_name = formData.get('collection');
+    const docs:string = formData.get('docs')?.toString()?? '' ;
+    const redirect_url = formData.get('redirect_url')?.toString() ?? '/';
+
+    if (collection_name && docs) {
+        for(let doc of docs.split(' ')){
+            await deleteItem(collection_name.toString(), doc.toString());
+        }
+    }
+
+    return redirect(redirect_url);
+
+}
+
 //Actions only for Equipe 
 
 export async function  elementEquipeAction(formData:FormData){
@@ -301,6 +316,41 @@ export async function deleteElementEquipeAction(formData: FormData){
 
     redirect(redirect_url);
 }
+
+export async function deleteElementsEquipeAction(formData: FormData){
+    const collection_name = formData.get('collection');
+    const docId = formData.get('docId');
+    //ids dos elementos
+    const elements:string = formData.get('elements')?.toString() ?? '';
+    const redirect_url = formData.get('redirect_url')?.toString() ?? '/';
+
+    if (collection_name && docId && elements != '') {
+
+        const doc = await getItemReference(collection_name.toString(), docId.toString());
+        const doc_data: any = (await getItem(doc)).data();
+        const delete_element:any = {};
+
+        for(let elementId of elements.split(' ')){
+            const elemento = doc_data['elemento-'+elementId];
+
+            if(elemento){
+                delete_element['elemento-'+elementId] = deleteField();
+            }
+
+        }
+
+        await updateItem(doc, delete_element);
+
+
+        
+        
+    }
+
+    redirect(redirect_url);
+}
+
+
+//Logout Action
 
 export async function logoutAction(formData:FormData){
     logout();

@@ -18,7 +18,7 @@ import ModalSelectOption from '@/components/Modal/Select/Option';
 import { useState } from 'react';
 import { Timestamp } from 'firebase/firestore';
 
-import { modalFormAction, deleteDocAction } from '@/app/actions';
+import { modalFormAction, deleteDocAction, deleteDocsAction} from '@/app/actions';
 import { exportDataExcel } from '@/utils/excel';
 
 interface AcademiaContentProps {
@@ -42,6 +42,10 @@ export default function AcademiaContent({ alunos }: AcademiaContentProps) {
     
     //ID do documento (elemento) que está ser atualizado no modal
     const [docId, setDocId] = useState<string | null>(null);
+
+    //Documentos selecionados para deletar
+    const [docsSelected, setDocsSelected]= useState<string[]>([]);
+
     const [modalData, setModalData]= useState({
         nome:'', 
         telefone:'', 
@@ -86,6 +90,30 @@ export default function AcademiaContent({ alunos }: AcademiaContentProps) {
         })
     }
 
+    const selectItem = (id:string)=>{
+
+        if(docsSelected.includes(id)){
+          setDocsSelected(docsSelected.filter((doc)=>{
+                if(doc == id) return false;
+                return true;
+          }));
+        }
+        else{
+            setDocsSelected([...docsSelected, id]);
+        }
+
+    }
+    const selectAllToogle= ()=>{
+        if(docsSelected.length == alunos.length){
+            setDocsSelected([]);
+        }
+        else{
+            setDocsSelected(alunos.map((aluno)=>{
+                return aluno.id;
+            }))
+        }
+    }
+
     const openModal = () => {
         setDocId(null);
         setShowModal(true);
@@ -122,6 +150,9 @@ export default function AcademiaContent({ alunos }: AcademiaContentProps) {
         labels: ['Nome Completo', 'Email', 'Telefone', 'Endereço', 'Curso', 'Modalidade',
             'Data de inscrição'],
         onClickRow: clickItem,
+        onSelectRow:selectItem,
+        onSelectToogleAll: selectAllToogle,
+        selecteds:docsSelected,
         
         rows: alunos.map((aluno) => {
             const data = aluno.data;
@@ -146,6 +177,27 @@ export default function AcademiaContent({ alunos }: AcademiaContentProps) {
             <div className='table-area'>
                 <div className='table-area-title'>Alunos da Academia</div>
                 <div className='table-area-header'>
+                    
+                    <form action={async (data:FormData)=>{
+                        await deleteDocsAction(data);
+                        setDocsSelected([]);
+                    }} onSubmit={()=>{
+                            setShowModal(false);
+                        }}> 
+                            <input type="hidden" name='redirect_url' value='/academia'/>
+                            <input type="hidden" name='collection' value='inscricao'/>
+
+
+                            <input type="hidden" name="docs" value={docsSelected.length > 0 ? docsSelected.reduce((previous, value)=> {
+                                return previous + ' '+value;
+                            }): ''} />
+                             <button className="btn-table btn-table-delete-item" 
+                            disabled={docsSelected.length == 0 ? true :false }>
+                                <Image src='/icons/trash.png' width='20' height='20' alt='' />
+                                Apagar Itens
+                            </button>
+                    </form>
+
                     <button className="btn-table btn-table-add" onClick={openModal}>
                         <Image src='/icons/add.png' width='20' height='20' alt='' />
                         Adicionar

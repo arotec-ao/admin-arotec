@@ -7,7 +7,7 @@ interface ModalProps{
 export default function Modal({children, show}:ModalProps){
     return  (
         <div className={'modal ' + (show ? ' modal-show ': '')}>
-            {children}
+           <div className='modal-window'>{children}</div>
         </div>
     );
 }

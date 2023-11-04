@@ -15,7 +15,7 @@ import ModalInput from '@/components/Modal/Input';
 
 import { useState } from 'react';
 
-import { modalFormAction, deleteDocAction } from '@/app/actions';
+import { modalFormAction, deleteDocAction, deleteDocsAction } from '@/app/actions';
 import { exportDataExcel } from '@/utils/excel';
 
 interface CandidaturasContentProps {
@@ -29,6 +29,10 @@ export default function CandidaturasContent({ candidaturas }: CandidaturasConten
     
     //ID do documento (elemento) que está ser atualizado no modal
     const [docId, setDocId] = useState<string | null>(null);
+    
+    //Documentos selecionados para deletar
+    const [docsSelected, setDocsSelected]= useState<string[]>([]);
+
     const [modalData, setModalData]= useState({
         nome:'', 
         telefone:'', 
@@ -53,6 +57,30 @@ export default function CandidaturasContent({ candidaturas }: CandidaturasConten
             telefone: doc?.data.telefone, 
             email: doc?.data.email,
         })
+    }
+
+    const selectItem = (id:string)=>{
+
+        if(docsSelected.includes(id)){
+          setDocsSelected(docsSelected.filter((doc)=>{
+                if(doc == id) return false;
+                return true;
+          }));
+        }
+        else{
+            setDocsSelected([...docsSelected, id]);
+        }
+
+    }
+    const selectAllToogle= ()=>{
+        if(docsSelected.length == candidaturas.length){
+            setDocsSelected([]);
+        }
+        else{
+            setDocsSelected(candidaturas.map((candidatura)=>{
+                return candidatura.id;
+            }))
+        }
     }
 
     const openModal = () => {
@@ -81,6 +109,9 @@ export default function CandidaturasContent({ candidaturas }: CandidaturasConten
     const tableData: TableData = {
         labels: ['Nome Completo', 'Email', 'Telefone'],
         onClickRow: clickItem,
+        onSelectRow:selectItem,
+        onSelectToogleAll: selectAllToogle,
+        selecteds:docsSelected,
         rows: candidaturas.map((candidatura) => {
             const data = candidatura.data;
 
@@ -101,6 +132,26 @@ export default function CandidaturasContent({ candidaturas }: CandidaturasConten
             <div className='table-area'>
                 <div className='table-area-title'>Candidaturas para Estágio</div>
                 <div className='table-area-header'>
+                    <form action={async (data:FormData)=>{
+                        await deleteDocsAction(data);
+                        setDocsSelected([]);
+                    }} onSubmit={()=>{
+                            setShowModal(false);
+                        }}> 
+                            <input type="hidden" name='redirect_url' value='/candidaturas'/>
+                            <input type="hidden" name='collection' value='candidaturas'/>
+
+
+                            <input type="hidden" name="docs" value={docsSelected.length > 0 ? docsSelected.reduce((previous, value)=> {
+                                return previous + ' '+value;
+                            }): ''} />
+                             <button className="btn-table btn-table-delete-item" 
+                            disabled={docsSelected.length == 0 ? true :false }>
+                                <Image src='/icons/trash.png' width='20' height='20' alt='' />
+                                Apagar Itens
+                            </button>
+                    </form>
+                    
                     <button className="btn-table btn-table-add" onClick={openModal}>
                         <Image src='/icons/add.png' width='20' height='20' alt='' />
                         Adicionar
@@ -148,9 +199,6 @@ export default function CandidaturasContent({ candidaturas }: CandidaturasConten
                     <ModalFooter update={docId == null ? false: true}></ModalFooter>
                 </form>
             </Modal>
-
-
-
         </>
     );
 }

@@ -26,6 +26,7 @@
     display:flex;
     align-items: center;
     gap:10px;
+    flex-wrap: wrap;
 }
 
 .btn-table{
@@ -39,7 +40,10 @@
     gap:6px;
 
 }
-
+.btn-table:disabled{
+    cursor: default;
+    background: #eee;
+}
 .btn-table:hover{
     transition: all 0.4s;
 }
@@ -50,6 +54,11 @@
 }
 .btn-table-add:hover{
     background-color:  rgb(0, 78, 233);
+}
+
+.btn-table-delete-item{
+    background-color: #f70000;
+    margin-right: 10px;
 }
 
 .btn-table-export{

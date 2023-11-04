@@ -1,0 +1,44 @@
+.table-checkbox {
+    cursor: pointer;
+    height: 20px;
+    position: relative;
+    width: 20px;
+
+    overflow: hidden;
+    background-color: #eee;
+    border-radius: 6px;
+}
+
+.table-checkbox input[type="checkbox"] {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    height: 0;
+    width: 0;
+}
+
+.table-checkbox .handle {
+    width: 100%;
+    height: 100%;
+    position: relative;
+
+
+}
+
+.table-checkbox .handle .checkmark {
+   
+    transform: translate(-50%, -50%);
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    display: none;
+}
+
+.table-checkbox input[type="checkbox"]:checked~.handle {
+    background:  rgb(39, 111, 255);
+
+}
+
+.table-checkbox input[type="checkbox"]:checked~.handle .checkmark {
+    display: block;
+}
