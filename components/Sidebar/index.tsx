@@ -1,4 +1,4 @@
-import './styles.css';
+import './style.css';
 import Link from 'next/link'
 import Image from 'next/image'
 import SidebarLinkPage from './SidebarLinkPage';

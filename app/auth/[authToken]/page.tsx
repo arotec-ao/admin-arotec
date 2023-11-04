@@ -20,6 +20,10 @@ interface AuthProps {
     searchParams:AuthSearchParamsType
 }
 
+export const metadata = {
+    title: 'Login Panel',
+}
+
 export default function Auth({ params, searchParams }: AuthProps) {
     const { authToken } = params;
 
