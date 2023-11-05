@@ -36,7 +36,7 @@ export function generateTable(dados: TableData) {
         <Table>
             <TableHeader>
                 <TableRow>
-                    {dados.onSelectToogleAll && <TableColumn   header><TableCheckout checked={(dados.selecteds?.length ?? 0) == dados.rows.length ? true: false} 
+                    {dados.onSelectToogleAll && <TableColumn   header><TableCheckout checked={(dados.selecteds?.length ?? 0) == dados.rows.length && (dados.selecteds?.length ?? 0) > 0? true: false} 
                     onClick={(value:boolean)=>{
                         if(dados.onSelectToogleAll){
                             dados.onSelectToogleAll()
