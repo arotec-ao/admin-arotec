@@ -44,7 +44,6 @@ export default function ProjectosDIYContent({ projectos }: ProjectosDIYContentPr
         link:'',
         fotoUrl: '', 
         fotoUrlDownload:'', 
-        id:''
     });
 
     const clickItem = (docId:string)=>{
@@ -69,7 +68,6 @@ export default function ProjectosDIYContent({ projectos }: ProjectosDIYContentPr
             descricao:doc?.data.descricao, 
             visualizacoes: doc?.data.visualizacoes,
             link:doc?.data.link, 
-            id:doc?.data.id, 
             fotoUrl: doc?.data.fotoUrl, 
             fotoUrlDownload:doc?.data.fotoUrlDownload
         })
@@ -113,8 +111,7 @@ export default function ProjectosDIYContent({ projectos }: ProjectosDIYContentPr
             link:'', 
             fotoUrl: '', 
             fotoUrlDownload:'', 
-            id:''
-    
+
         });
         
     }
@@ -220,7 +217,6 @@ export default function ProjectosDIYContent({ projectos }: ProjectosDIYContentPr
                     <input type="hidden" name='collection' value='projetos'/>
                     <input type="hidden" name="docId" value={docId == null ? '': docId} />
                     <ModalContent>
-                        <ModalInput label='ID' name="id" placeholder='ID: ' initialValue={modalData.id}/>
                         <ModalInput label='Título' name="titulo" placeholder='Título: ' initialValue={modalData.titulo}/>
                         <ModalInput label='Descrição' name="descricao" placeholder='Descrição: ' type="textarea" initialValue={modalData.descricao}/>
                         <ModalInput label='Email' name="email" placeholder='Email: ' initialValue={modalData.email}/>

@@ -1,39 +1,57 @@
-import { ReactElement } from "react";
+import { useState, useMemo } from "react";
 
-interface ModalInputProps{
-label:string, 
-placeholder?: string,
-type?: string, 
-children?:React.ReactNode,
-name?:string,
-initialValue?:string,
+interface ModalInputProps {
+    label: string,
+    placeholder?: string,
+    type?: string,
+    children?: React.ReactNode,
+    name?: string,
+    initialValue?: string,
+    onChange?: Function,
 }
 
-export default function ModalInput({label, placeholder='', type='input', 
-name='', children=(<></>), initialValue=''} : ModalInputProps){
+export default function ModalInput({ label, placeholder = '', type = 'input',
+    name = '', children = (<></>), initialValue = '', onChange }: ModalInputProps) {
 
-    var input_element;
-    switch(type){
-        case 'input':
-            input_element = 
-            ( <input name={name} className="modal-input" type="text" placeholder={placeholder} 
-            defaultValue={initialValue}></input>);
-            break;
-        case 'password':
-            input_element = 
-            ( <input name={name} className="modal-input" type="password" placeholder={placeholder}
-            defaultValue={initialValue}></input>);
-            break;
-        case 'textarea':
-            input_element=(
-                <textarea name={name} className="modal-input" placeholder={placeholder} defaultValue={initialValue}></textarea>
-            );
-            break;
+    const input_element = useMemo(() => {
+        switch (type) {
+            case 'input':
 
-        case 'select':
-            input_element=(children);
-            break;
-    }
+                return (<input name={name} className="modal-input" type="text" placeholder={placeholder}
+                    defaultValue={initialValue} onChange={(ev) => {
+                        if (onChange) {
+                            onChange(ev)
+
+                        }
+                    }}></input>);
+
+            case 'password':
+                return (<input name={name} className="modal-input" type="password" placeholder={placeholder}
+                    defaultValue={initialValue} onChange={(ev) => {
+                        if (onChange) {
+                            onChange(ev)
+
+                        }
+                    }}></input>);
+
+            case 'textarea':
+                return (
+                    <textarea name={name} className="modal-input" placeholder={placeholder} defaultValue={initialValue} onChange={(ev) => {
+                        if (onChange) {
+                            onChange(ev)
+
+                        }
+                    }}></textarea>
+                );
+                break;
+
+            case 'select':
+                return (children);
+                break;
+        }
+
+    }, [initialValue, children]);
+
     return (
         <div className="modal-input-group">
             <label className="modal-label">{label}</label>

@@ -27,6 +27,8 @@ export default function Sidebar({page, showMobile, onToogleShowSidebar}:SidebarP
             <div className='sidebar-container'>
                 <SidebarLinkPage title="Dashboard" href="/" current={ page =='home' ?true: false}/>
                 <SidebarLinkPage title="Academia" href="/academia" current={ page =='academia' ?true: false} />
+                <SidebarLinkPage title="Compras" href="/compras" current={ page =='compras' ?true: false} />
+                <SidebarLinkPage title="Produtos" href="/produtos" current={ page =='produtos' ?true: false} />
                 <SidebarLinkPage title="Candidaturas" href="/candidaturas" current={ page =='candidaturas' ?true: false} />
                 <SidebarLinkPage title="Equipes (CANAR)" href="/equipes-canar" current={ page =='equipes-canar' ?true: false} />
                 <SidebarLinkPage title="Projectos DIY" href="/projectos_diy" current={ page =='projectos_diy' ?true: false} />

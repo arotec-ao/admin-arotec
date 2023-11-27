@@ -1,0 +1,45 @@
+.msImagensTitle{
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.msImagensAdd{
+    display:flex;
+    align-items: center;
+    margin-bottom:15px;
+}
+
+.msImagensButton{
+    background-color: #ddd;
+    margin-left: 15px;
+    padding: 8px;
+    cursor: pointer;
+    border-radius: 50%;
+}
+
+.msImagensButton:hover{
+    background-color: #ccc;
+}
+
+.msImagemContainer{
+    display:flex;
+    flex-direction: column;
+    font-size:14px;
+    padding-left: 30px;
+    padding-top: 10px;
+}
+
+.msImagem{
+    padding-top: 8px;
+    border-top: 1px solid #eee;
+    margin-bottom: 10px;
+    
+}
+
+.msImagemInput{
+    margin-top: 10px;
+    display: inline-block;
+    padding: 6px 8px;
+    text-align: center;
+}
+

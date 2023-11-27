@@ -98,6 +98,10 @@ animation: modal_show 0.6s forwards;
     border-radius: 6px;
 }
 
+.modal-input:focus{
+    outline: 1px solid  rgb(0, 85, 255);
+}
+
 .modal-footer{
     padding-top:15px;
     border-top: 1px solid #eee;

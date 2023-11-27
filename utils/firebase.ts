@@ -1,11 +1,13 @@
 import { initializeApp } from "firebase/app";
-import {  getFirestore, collection, 
+import {  getFirestore, collection,  
     getDocs, DocumentData, getDoc,
     addDoc, deleteDoc,
     doc,
     CollectionReference,
     updateDoc,
     DocumentReference} from "firebase/firestore";
+
+import {getDownloadURL, getStorage, ref, uploadBytes,deleteObject, UploadMetadata} from 'firebase/storage';
 
 const firebaseConfig = {
   apiKey: process.env.FIREBASE_API_KEY,
@@ -19,6 +21,10 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 
 const db = getFirestore(app);
+
+const storage = getStorage(app);
+
+/* Firestore */
 
 //pega o número de elementos tem uma coleção
 export async function sizeCollection(collection:CollectionReference<DocumentData, DocumentData>):Promise<number>{
@@ -66,4 +72,24 @@ export async function updateItem(doc:DocumentReference<unknown, DocumentData>, d
 //deleta um item de uma coleção
 export async function deleteItem(collection:string, docId:string){
     await deleteDoc(await getItemReference(collection, docId));
+}
+
+/* Storage */
+
+//enviar ficheiro para o firebase
+export function uploadFile(url:string, data: ArrayBuffer | Blob | Uint8Array, 
+    metadata:UploadMetadata |  undefined = undefined
+    ){
+
+    return new Promise<string>(async (resolve, reject)=>{
+        const imageRef = ref(storage, url);
+        resolve(await getDownloadURL((await uploadBytes(imageRef, data, metadata)).ref))
+    });
+   
+}
+
+//eliminar ficheiro do firebase
+export async function deleteFile(url:string){
+    const imageRef = ref(storage, url);
+    await deleteObject(imageRef);
 }

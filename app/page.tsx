@@ -13,10 +13,10 @@ import {sizeCollection, getCollection} from '@/utils/firebase';
 async function getSizeColecoes() {
   return {
     academia: await sizeCollection(getCollection('inscricao')),
+    compras: await sizeCollection(getCollection('compras')),
+    produtos: await sizeCollection(getCollection('produtos')),
     candidaturas:await sizeCollection(getCollection('candidaturas')),
     equipes: await sizeCollection(getCollection('equipes')),
-    cursos_academia: '-',
-    produtos_loja: '-',
     projectos_diy: await sizeCollection (getCollection('projetos')),
     sinopec_learn: await sizeCollection (getCollection('sinopec_learn')),
     unitel_code: await sizeCollection (getCollection('unitel_code')),
@@ -36,6 +36,8 @@ export default async function Home() {
             <div className="cards-dashboard-container">
       
                 <CardDashboard title='Alunos da Academia' url_view='/academia' value={size_colecoes.academia} />
+                <CardDashboard title='Compras da Loja IO' url_view='/compras' value={size_colecoes.compras} />
+                <CardDashboard title='Produtos da Loja IO' url_view='/produtos' value={size_colecoes.produtos} />
                 <CardDashboard title='Candidaturas de Estágio' url_view='/candidaturas' value={size_colecoes.candidaturas} />
                 <CardDashboard title='Equipes do CANAR' url_view='/equipes-canar' value={size_colecoes.equipes} />
                 <CardDashboard title='Projectos DIY' url_view='/projectos_diy' value={size_colecoes.projectos_diy} />
