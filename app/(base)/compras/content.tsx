@@ -15,7 +15,7 @@ import ModalInput from '@/components/Modal/Input';
 import ModalSelect from '@/components/Modal/Select';
 import ModalSelectOption from '@/components/Modal/Select/Option';
 
-import { useRef, useState } from 'react';
+import { useRef, useState, useMemo } from 'react';
 import { Timestamp } from 'firebase/firestore';
 
 import { modalFormAction, deleteDocAction, deleteDocsAction } from '@/app/actions';
@@ -70,6 +70,54 @@ const metodosPagamento: string[] = [
 ]
 
 export default function ComprasContent({ compras, produtos }: ComprasContentProps) {
+
+    
+    const [pesquisa, setPesquisa] = useState('');
+    const [filtro, setFiltro] = useState('nome');
+
+    //faz o filtro de busca
+    const comprasFiltrados = useMemo(()=>{
+
+        //verificar a pesquisa
+        const cmps = compras.filter((compra)=>{
+
+            var isValid =false;
+            if(pesquisa !=  ''){
+                if ((new RegExp(pesquisa , 'i')).test(compra.data.informacoesEntrega.nomeCompleto)){
+                    isValid=true;
+                }
+            }
+            else{
+                isValid=true;
+            }
+            return isValid;
+        });
+    
+        //verificar a categoria
+        return cmps.sort((a:any, b:any)=>{
+            switch (filtro){
+                case 'nome':
+                    if(a.data.informacoesEntrega.nomeCompleto < b.data.informacoesEntrega.nomeCompleto) { return -1; }
+                    if(a.data.informacoesEntrega.nomeCompleto > b.data.informacoesEntrega.nomeCompleto) { return 1; }
+                    return 0;
+                 
+                case 'pais':
+                    if(a.data.informacoesEntrega.pais < b.data.informacoesEntrega.pais) { return -1; }
+                    if(a.data.informacoesEntrega.pais > b.data.informacoesEntrega.pais) { return 1; }
+                    return 0;
+                case 'data':
+                  
+                        if(a.data.dataCompra.seconds < b.data.dataCompra.seconds) { return 1; }
+                        if(a.data.dataCompra.seconds > b.data.dataCompra.seconds) { return -1; }
+                        return 0;
+                default:
+                        if(a.data.informacoesEntrega.nomeCompleto < b.data.informacoesEntrega.nomeCompleto) { return -1; }
+                        if(a.data.informacoesEntrega.nomeCompleto > b.data.informacoesEntrega.nomeCompleto) { return 1; }
+                        return 0;
+            }
+        })
+
+    }, [compras, filtro, pesquisa]);
 
     const [showModal, setShowModal] = useState(false);
 
@@ -219,7 +267,7 @@ export default function ComprasContent({ compras, produtos }: ComprasContentProp
 
 
     const exportData = () => {
-        exportDataExcel(compras.map((compra) => {
+        exportDataExcel(comprasFiltrados.map((compra) => {
             return {
                 ...compra.data,
                 dataCompra:
@@ -240,7 +288,7 @@ export default function ComprasContent({ compras, produtos }: ComprasContentProp
         selecteds: docsSelected,
 
 
-        rows: compras.map((compra) => {
+        rows: comprasFiltrados.map((compra) => {
             const data = compra.data;
             return {
                 id: compra.id.toString(),
@@ -270,6 +318,29 @@ export default function ComprasContent({ compras, produtos }: ComprasContentProp
         <>
             <div className='table-area'>
                 <div className='table-area-title'>Compras da Loja IO</div>
+                
+                <div className='table-filtros'>
+                    <div className='table-filtros-pesquisa'>
+                        Pesquise:
+                        <input className='pesquisa-input' type="text"  placeholder='Escreve o nome do comprador...' 
+                        onChange={(ev)=>{
+                            setPesquisa(ev.target.value);
+                        }}/>
+                    </div>
+                    <div className='table-filtros-agrupar'>
+                        Agrupar por: 
+                        <select className='agrupar-input'onChange={(ev)=>{
+                            setFiltro(ev.target.value);
+                        }}>
+                            <option value='nome'>Nome</option>
+                            <option value='nome'>Pais</option>
+                            <option value='data'>Data de compra</option>
+                        </select>
+
+                    </div>
+                
+                </div>
+                
                 <div className='table-area-header'>
 
                     <form action={async (data: FormData) => {

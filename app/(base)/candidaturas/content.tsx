@@ -13,7 +13,7 @@ import ModalContent from '@/components/Modal/Content';
 import ModalFooter from '@/components/Modal/Footer';
 import ModalInput from '@/components/Modal/Input';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 
 import { modalFormAction, deleteDocAction, deleteDocsAction } from '@/app/actions';
 import { exportDataExcel } from '@/utils/excel';
@@ -25,6 +25,45 @@ interface CandidaturasContentProps {
     }[];
 }
 export default function CandidaturasContent({ candidaturas }: CandidaturasContentProps) {
+    
+    const [pesquisa, setPesquisa] = useState('');
+    const [filtro, setFiltro] = useState('nome');
+
+    //faz o filtro de busca
+    const candidaturasFiltrados = useMemo(()=>{
+
+        //verificar a pesquisa
+        const cads = candidaturas.filter((cad)=>{
+
+            var isValid =false;
+            if(pesquisa !=  ''){
+                if ((new RegExp(pesquisa , 'i')).test(cad.data.nome)){
+                    isValid=true;
+                }
+            }
+            else{
+                isValid=true;
+            }
+            return isValid;
+        });
+       
+
+        //verificar a categoria
+        return cads.sort((a:any, b:any)=>{
+            switch (filtro){
+                case 'nome':
+                    if(a.data.nome < b.data.nome) { return -1; }
+                    if(a.data.nome > b.data.nome) { return 1; }
+                    return 0;
+                default: 
+                    if(a.data.nome < b.data.nome) { return -1; }
+                    if(a.data.nome > b.data.nome) { return 1; }
+                    return 0;
+            }
+        })
+
+    }, [candidaturas, filtro, pesquisa]);
+
     const [showModal, setShowModal] = useState(false);
     
     //ID do documento (elemento) que está ser atualizado no modal
@@ -101,7 +140,7 @@ export default function CandidaturasContent({ candidaturas }: CandidaturasConten
     }
 
     const exportData = ()=>{
-        exportDataExcel(candidaturas.map((candidatura)=>{
+        exportDataExcel(candidaturasFiltrados.map((candidatura)=>{
             return candidatura.data;
         }), 'Candidaturas de Estágio');
     }
@@ -112,7 +151,7 @@ export default function CandidaturasContent({ candidaturas }: CandidaturasConten
         onSelectRow:selectItem,
         onSelectToogleAll: selectAllToogle,
         selecteds:docsSelected,
-        rows: candidaturas.map((candidatura) => {
+        rows: candidaturasFiltrados.map((candidatura) => {
             const data = candidatura.data;
 
             return {
@@ -131,6 +170,27 @@ export default function CandidaturasContent({ candidaturas }: CandidaturasConten
         <>
             <div className='table-area'>
                 <div className='table-area-title'>Candidaturas para Estágio</div>
+                
+                <div className='table-filtros'>
+                    <div className='table-filtros-pesquisa'>
+                        Pesquise:
+                        <input className='pesquisa-input' type="text"  placeholder='Escreve o nome do candidato...' 
+                        onChange={(ev)=>{
+                            setPesquisa(ev.target.value);
+                        }}/>
+                    </div>
+                    <div className='table-filtros-agrupar'>
+                        Agrupar por: 
+                        <select className='agrupar-input'onChange={(ev)=>{
+                            setFiltro(ev.target.value);
+                        }}>
+                            <option value='nome'>Nome</option>
+                        </select>
+
+                    </div>
+                
+                </div>
+                
                 <div className='table-area-header'>
                     <form action={async (data:FormData)=>{
                         await deleteDocsAction(data);

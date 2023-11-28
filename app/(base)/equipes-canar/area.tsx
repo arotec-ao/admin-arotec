@@ -10,7 +10,7 @@ import ModalContent from '@/components/Modal/Content';
 import ModalFooter from '@/components/Modal/Footer';
 import ModalInput from '@/components/Modal/Input';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 
 import { elementEquipeAction , deleteElementEquipeAction, deleteElementsEquipeAction} from '@/app/actions';
 import { exportDataExcel } from '@/utils/excel';
@@ -42,6 +42,44 @@ export default function EquipeArea({ equipe, onEditarEquipe }: EquipeAreaProps) 
         
         elementos.push({ ...equipe.data[key], id: key.slice(('elemento-'.length), key.length)  });
     }
+
+    const [pesquisa, setPesquisa] = useState('');
+    const [filtro, setFiltro] = useState('nome');
+
+    //faz o filtro de busca
+    const elementosFiltrados = useMemo(()=>{
+
+        //verificar a pesquisa
+        const elements = elementos.filter((element)=>{
+
+            var isValid =false;
+            if(pesquisa !=  ''){
+                if ((new RegExp(pesquisa , 'i')).test(element.nome)){
+                    isValid=true;
+                }
+            }
+            else{
+                isValid=true;
+            }
+            return isValid;
+        });
+    
+        //verificar a categoria
+        return elements.sort((a:any, b:any)=>{
+            switch (filtro){
+                case 'nome':
+                    if(a.nome < b.nome) { return -1; }
+                    if(a.nome > b.nome) { return 1; }
+                    return 0;
+             
+                default:
+                        if(a.nome < b.nome) { return -1; }
+                        if(a.nome > b.nome) { return 1; }
+                        return 0;
+            }
+        })
+
+    }, [elementos, filtro, pesquisa]);
 
     const [showModal, setShowModal] = useState(false);
 
@@ -127,7 +165,7 @@ export default function EquipeArea({ equipe, onEditarEquipe }: EquipeAreaProps) 
             email: data.email,
 
             elementos:
-                elementos.map((elemento) => {
+            elementosFiltrados.map((elemento) => {
                     return {
                         nome: elemento.nome,
                         funcao: elemento.funcao,
@@ -144,7 +182,7 @@ export default function EquipeArea({ equipe, onEditarEquipe }: EquipeAreaProps) 
         onSelectRow: selectItem,
         onSelectToogleAll: selectAllToogle,
         selecteds: elementsSelected,
-        rows: elementos.map((elemento) => {
+        rows: elementosFiltrados.map((elemento) => {
             return {
                 id: elemento.id,
                 columns_data: [
@@ -167,6 +205,26 @@ export default function EquipeArea({ equipe, onEditarEquipe }: EquipeAreaProps) 
                 <div className='mg-bottom-15'>Email da equipa: {data.email}</div>
                 <div className='mg-bottom-15'>Telefone da equipa: {data.telefone}</div>
                 <div className='mg-bottom-15'>Nome da instituição: {data.nomeInstituicao}</div>
+                
+                <div className='table-filtros'>
+                    <div className='table-filtros-pesquisa'>
+                        Pesquise:
+                        <input className='pesquisa-input' type="text"  placeholder='Escreve o nome do elemento...' 
+                        onChange={(ev)=>{
+                            setPesquisa(ev.target.value);
+                        }}/>
+                    </div>
+                    <div className='table-filtros-agrupar'>
+                        Agrupar por: 
+                        <select className='agrupar-input'onChange={(ev)=>{
+                            setFiltro(ev.target.value);
+                        }}>
+                            <option value='nome'>Nome</option>
+                        </select>
+
+                    </div>
+                
+                </div>
                 <div className='table-area-header'>
                     
                 <form action={async (data: FormData) => {

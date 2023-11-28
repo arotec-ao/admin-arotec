@@ -13,7 +13,7 @@ import ModalContent from '@/components/Modal/Content';
 import ModalFooter from '@/components/Modal/Footer';
 import ModalInput from '@/components/Modal/Input';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { Timestamp } from 'firebase/firestore';
 
 import { modalFormAction, deleteDocAction, deleteDocsAction } from '@/app/actions';
@@ -27,6 +27,63 @@ interface SinopecLearnContentProps {
     }[];
 }
 export default function SinopecLearnContent({ alunos }: SinopecLearnContentProps) {
+
+    const [pesquisa, setPesquisa] = useState('');
+    const [filtro, setFiltro] = useState('nome');
+
+    //faz o filtro de busca
+    const alunosFiltrados = useMemo(()=>{
+
+        //verificar a pesquisa
+        const als = alunos.filter((aluno)=>{
+
+            var isValid =false;
+            if(pesquisa !=  ''){
+                if ((new RegExp(pesquisa , 'i')).test(aluno.data.nome)){
+                    isValid=true;
+                }
+            }
+            else{
+                isValid=true;
+            }
+            return isValid;
+        });
+    
+        //verificar a categoria
+        return als.sort((a:any, b:any)=>{
+            switch (filtro){
+                case 'nome':
+                    if(a.data.nome < b.data.nome) { return -1; }
+                    if(a.data.nome > b.data.nome) { return 1; }
+                    return 0;
+                 
+                case 'encarregado':
+                    if(a.data.encarregado < b.data.encarregado) { return -1; }
+                    if(a.data.encarregado > b.data.encarregado) { return 1; }
+                    return 0;
+                 
+                case 'local':
+                    if(a.data.local < b.data.local) { return -1; }
+                    if(a.data.local > b.data.local) { return 1; }
+                    return 0;
+
+                    case 'hora':
+                        if(a.data.hora < b.data.hora) { return -1; }
+                        if(a.data.hora > b.data.hora) { return 1; }
+                        return 0;
+                case 'data':
+                  
+                        if(a.data.dataEnvio.seconds < b.data.dataEnvio.seconds) { return 1; }
+                        if(a.data.dataEnvio.seconds > b.data.dataEnvio.seconds) { return -1; }
+                        return 0;
+                default:
+                        if(a.data.nome < b.data.nome) { return -1; }
+                        if(a.data.nome > b.data.nome) { return 1; }
+                        return 0;
+            }
+        })
+
+    }, [alunos, filtro, pesquisa]);
 
     const [showModal, setShowModal] = useState(false);
     
@@ -123,7 +180,7 @@ export default function SinopecLearnContent({ alunos }: SinopecLearnContentProps
 
 
     const exportData = ()=>{
-        exportDataExcel(alunos.map((aluno)=>{
+        exportDataExcel(alunosFiltrados.map((aluno)=>{
             return {...aluno.data, 
                 dataEnvio:
                 ( Timestamp.fromMillis(aluno.data.dataEnvio.seconds * 1000).
@@ -139,7 +196,7 @@ export default function SinopecLearnContent({ alunos }: SinopecLearnContentProps
         onSelectRow: selectItem,
         onSelectToogleAll: selectAllToogle,
         selecteds: docsSelected,
-        rows: alunos.map((aluno) => {
+        rows: alunosFiltrados.map((aluno) => {
             const data = aluno.data;
 
             return {
@@ -165,6 +222,30 @@ export default function SinopecLearnContent({ alunos }: SinopecLearnContentProps
         <>
         <div className='table-area'>
             <div className='table-area-title'>Alunos do Sinopec Learn</div>
+            <div className='table-filtros'>
+                    <div className='table-filtros-pesquisa'>
+                        Pesquise:
+                        <input className='pesquisa-input' type="text"  placeholder='Escreve o nome do aluno...' 
+                        onChange={(ev)=>{
+                            setPesquisa(ev.target.value);
+                        }}/>
+                    </div>
+                    <div className='table-filtros-agrupar'>
+                        Agrupar por: 
+                        <select className='agrupar-input'onChange={(ev)=>{
+                            setFiltro(ev.target.value);
+                        }}>
+                            <option value='nome'>Nome</option>
+                            <option value='encarregado'>Encarregado</option>
+                            <option value='local'>Local</option>
+                            <option value='hora'>Hora</option>
+                            <option value='data'>Data de inscricão</option>
+                   
+                        </select>
+
+                    </div>
+                
+                </div>
             <div className='table-area-header'>
                 
                 <form action={async (data: FormData) => {

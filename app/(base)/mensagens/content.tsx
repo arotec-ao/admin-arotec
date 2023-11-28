@@ -14,7 +14,7 @@ import ModalContent from '@/components/Modal/Content';
 import ModalFooter from '@/components/Modal/Footer';
 import ModalInput from '@/components/Modal/Input';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { Timestamp } from 'firebase/firestore';
 
 import { modalFormAction, deleteDocAction, deleteDocsAction } from '@/app/actions';
@@ -28,6 +28,51 @@ interface MensagensContentProps {
     }[];
 }
 export default function MensagensContent({ mensagens }: MensagensContentProps) {
+
+    const [pesquisa, setPesquisa] = useState('');
+    const [filtro, setFiltro] = useState('nome');
+
+    //faz o filtro de busca
+    const mensagensFiltrados = useMemo(() => {
+
+        //verificar a pesquisa
+        const ms = mensagens.filter((mensagem) => {
+
+            var isValid = false;
+            if (pesquisa != '') {
+                if ((new RegExp(pesquisa, 'i')).test(mensagem.data.nomeCompleto)) {
+                    isValid = true;
+                }
+            }
+            else {
+                isValid = true;
+            }
+            return isValid;
+        });
+
+        //verificar a categoria
+        return ms.sort((a: any, b: any) => {
+            switch (filtro) {
+                case 'nome':
+                    if (a.data.nomeCompleto < b.data.nomeCompleto) { return -1; }
+                    if (a.data.nomeCompleto > b.data.nomeCompleto) { return 1; }
+                    return 0;
+
+                case 'data':
+
+                    if (a.data.dataEnvio.seconds < b.data.dataEnvio.seconds) { return 1; }
+                    if (a.data.dataEnvio.seconds > b.data.dataEnvio.seconds) { return -1; }
+                    return 0;
+
+
+                default:
+                    if (a.data.nomeCompleto < b.data.nomeCompleto) { return -1; }
+                    if (a.data.nomeCompleto > b.data.nomeCompleto) { return 1; }
+                    return 0;
+            }
+        })
+
+    }, [mensagens, filtro, pesquisa]);
 
     const [showModal, setShowModal] = useState(false);
 
@@ -111,7 +156,7 @@ export default function MensagensContent({ mensagens }: MensagensContentProps) {
 
 
     const exportData = () => {
-        exportDataExcel(mensagens.map((mensagem) => {
+        exportDataExcel(mensagensFiltrados.map((mensagem) => {
             return {
                 ...mensagem.data,
                 dataEnvio:
@@ -129,7 +174,7 @@ export default function MensagensContent({ mensagens }: MensagensContentProps) {
         onSelectToogleAll: selectAllToogle,
         selecteds: docsSelected,
 
-        rows: mensagens.map((mensagem) => {
+        rows: mensagensFiltrados.map((mensagem) => {
             const data = mensagem.data;
 
             return {
@@ -149,6 +194,29 @@ export default function MensagensContent({ mensagens }: MensagensContentProps) {
     return (
         <><div className='table-area'>
             <div className='table-area-title'></div>
+
+            <div className='table-filtros'>
+                <div className='table-filtros-pesquisa'>
+                    Pesquise:
+                    <input className='pesquisa-input' type="text" placeholder='Escreve o nome do emissor...'
+                        onChange={(ev) => {
+                            setPesquisa(ev.target.value);
+                        }} />
+                </div>
+                <div className='table-filtros-agrupar'>
+                    Agrupar por:
+                    <select className='agrupar-input' onChange={(ev) => {
+                        setFiltro(ev.target.value);
+                    }}>
+                        <option value='nome'>Nome</option>
+                        <option value='data'>Data de envio</option>
+
+                    </select>
+
+                </div>
+
+            </div>
+
             <div className='table-area-header'>
 
                 <form action={async (data: FormData) => {

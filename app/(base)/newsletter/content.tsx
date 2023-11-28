@@ -14,7 +14,7 @@ import ModalContent from '@/components/Modal/Content';
 import ModalFooter from '@/components/Modal/Footer';
 import ModalInput from '@/components/Modal/Input';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { Timestamp } from 'firebase/firestore';
 
 import { modalFormAction, deleteDocAction, deleteDocsAction } from '@/app/actions';
@@ -28,6 +28,46 @@ interface NewsletterContentProps {
     }[];
 }
 export default function NewsletterContent({ inscritos }: NewsletterContentProps) {
+
+    const [pesquisa, setPesquisa] = useState('');
+    const [filtro, setFiltro] = useState('data');
+
+    //faz o filtro de busca
+    const inscritosFiltrados = useMemo(()=>{
+
+        //verificar a pesquisa
+        const inscs = inscritos.filter((inscrito)=>{
+
+            var isValid =false;
+            if(pesquisa !=  ''){
+                if ((new RegExp(pesquisa , 'i')).test(inscrito.data.email)){
+                    isValid=true;
+                }
+            }
+            else{
+                isValid=true;
+            }
+            return isValid;
+        });
+    
+        //verificar a categoria
+        return inscs.sort((a:any, b:any)=>{
+            switch (filtro){
+        
+                case 'data':
+                  
+                        if(a.data.dataEnvio.seconds < b.data.dataEnvio.seconds) { return 1; }
+                        if(a.data.dataEnvio.seconds > b.data.dataEnvio.seconds) { return -1; }
+                        return 0;
+                default:
+                    if(a.data.dataEnvio.seconds < b.data.dataEnvio.seconds) { return 1; }
+                    if(a.data.dataEnvio.seconds > b.data.dataEnvio.seconds) { return -1; }
+                    return 0;
+            }
+        })
+
+    }, [inscritos, filtro, pesquisa]);
+
     const [showModal, setShowModal] = useState(false);
 
     //ID do documento (elemento) que está ser atualizado no modal
@@ -101,7 +141,7 @@ export default function NewsletterContent({ inscritos }: NewsletterContentProps)
 
 
     const exportData = () => {
-        exportDataExcel(inscritos.map((inscrito) => {
+        exportDataExcel(inscritosFiltrados.map((inscrito) => {
             return {
                 ...inscrito.data,
                 dataEnvio:
@@ -117,7 +157,7 @@ export default function NewsletterContent({ inscritos }: NewsletterContentProps)
         onSelectRow: selectItem,
         onSelectToogleAll: selectAllToogle,
         selecteds: docsSelected,
-        rows: inscritos.map((inscrito) => {
+        rows: inscritosFiltrados.map((inscrito) => {
             const data = inscrito.data;
 
             return {
@@ -136,6 +176,26 @@ export default function NewsletterContent({ inscritos }: NewsletterContentProps)
         <>
             <div className='table-area'>
                 <div className='table-area-title'>Inscritos na newsletter</div>
+
+                <div className='table-filtros'>
+                    <div className='table-filtros-pesquisa'>
+                        Pesquise:
+                        <input className='pesquisa-input' type="text"  placeholder='Escreve o email...' 
+                        onChange={(ev)=>{
+                            setPesquisa(ev.target.value);
+                        }}/>
+                    </div>
+                    <div className='table-filtros-agrupar'>
+                        Agrupar por: 
+                        <select className='agrupar-input'onChange={(ev)=>{
+                            setFiltro(ev.target.value);
+                        }}>
+                            <option value='data'>Data de inscricão</option>
+                        </select>
+
+                    </div>
+                
+                </div>
                 <div className='table-area-header'>
 
                     <form action={async (data: FormData) => {

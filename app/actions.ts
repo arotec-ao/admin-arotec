@@ -41,16 +41,16 @@ export async function modalFormAction(formData: FormData) {
 
                         //reduz um valor na colecao produtos quando é registrado uma compra
                         for (const p of produtos) {
-                            if(p.pago){
+                            if (p.pago) {
                                 const doc = await getItemReference('produtos', p.id);
                                 const doc_data: any = (await getItem(doc)).data();
-    
+
                                 await updateItem(doc, {
                                     quantidade: parseInt(doc_data.quantidade) - parseInt(p.quantidade)
                                 });
                             }
                         }
-                    
+
 
                         (await putItem(collection, {
                             informacoesEntrega: {
@@ -83,55 +83,55 @@ export async function modalFormAction(formData: FormData) {
                 case 'produtos':
 
                     const imagensString = formData.get('imagens')?.toString();
-                    var imagens= null;
+                    var imagens = null;
 
-                    if(imagensString){
-                        try{
+                    if (imagensString) {
+                        try {
                             imagens = JSON.parse(imagensString);
 
-                            if(!Array.isArray(imagens)){
+                            if (!Array.isArray(imagens)) {
                                 imagens = null;
                             }
-        
-                        }catch(e){}
+
+                        } catch (e) { }
                     }
 
-                    if(imagens){
+                    if (imagens) {
 
-                        const imagensUploaded:{
-                            name: string, 
-                            url:string,
+                        const imagensUploaded: {
+                            name: string,
+                            url: string,
                         }[] = [];
 
-                        for(let x =0; x < imagens.length; x++){
-                            const file = formData.get('imagem_'+x) as File;
+                        for (let x = 0; x < imagens.length; x++) {
+                            const file = formData.get('imagem_' + x) as File;
 
-                            if(file){
+                            if (file) {
                                 var name_file = file.name;
-                                const newDate = new Date(Timestamp.now().seconds*1000);
-                                var data_new =  newDate.toLocaleString();
-                                
+                                const newDate = new Date(Timestamp.now().seconds * 1000);
+                                var data_new = newDate.toLocaleString();
+
                                 //pega a extensao do ficheiro
-                                var extension =  name_file.substring(name_file.lastIndexOf('.'), name_file.length);
-                                
+                                var extension = name_file.substring(name_file.lastIndexOf('.'), name_file.length);
+
                                 //pega o nome real da ficheiro
                                 var real_name_file = name_file.slice(0, name_file.lastIndexOf('.'));
 
                                 //e gera o nome final
-                                name_file = real_name_file + ' '+ data_new + extension;
+                                name_file = real_name_file + ' ' + data_new + extension;
                                 name_file = name_file.replaceAll('/', '-');
                                 name_file = name_file.replaceAll("\\", '-');
 
-                               const urlDownload  = await uploadFile('produtos/'+name_file, await file.arrayBuffer(), {
+                                const urlDownload = await uploadFile('produtos/' + name_file, await file.arrayBuffer(), {
                                     contentType: file.type
-                               });
-                                
+                                });
+
                                 imagensUploaded.push(
-                                    {name: name_file, url: urlDownload}
+                                    { name: name_file, url: urlDownload }
                                 );
-                            }  
+                            }
                         }
-                 
+
                         (await putItem(collection, {
                             nome: formData.get('nome')?.toString(),
                             marca: formData.get('marca')?.toString(),
@@ -142,11 +142,11 @@ export async function modalFormAction(formData: FormData) {
                             desconto: parseFloat(formData.get('desconto')?.toString() ?? '0'),
                             entrega: parseFloat(formData.get('entrega')?.toString() ?? '0'),
                             quantidade: parseInt(formData.get('quantidade')?.toString() ?? '0'),
-                            imagens: imagensUploaded, 
+                            imagens: imagensUploaded,
                             id: uuidv4()
                         }))
                     }
-                    
+
 
                     break;
                 case 'candidaturas':
@@ -167,6 +167,44 @@ export async function modalFormAction(formData: FormData) {
                     }))
                     break;
                 case 'projetos':
+
+                    const imagensUploaded: {
+                        name: string,
+                        url: string,
+                    } = {
+                        name:'' ,
+                        url:''
+                    };
+
+
+                    const file = formData.get('imagem') as File;
+
+
+                    if (file) {
+                        var name_file = file.name;
+                        const newDate = new Date(Timestamp.now().seconds * 1000);
+                        var data_new = newDate.toLocaleString();
+
+                        //pega a extensao do ficheiro
+                        var extension = name_file.substring(name_file.lastIndexOf('.'), name_file.length);
+
+                        //pega o nome real da ficheiro
+                        var real_name_file = name_file.slice(0, name_file.lastIndexOf('.'));
+
+                        //e gera o nome final
+                        name_file = real_name_file + ' ' + data_new + extension;
+                        name_file = name_file.replaceAll('/', '-');
+                        name_file = name_file.replaceAll("\\", '-');
+
+                        const urlDownload = await uploadFile('projectos/' + name_file, await file.arrayBuffer(), {
+                            contentType: file.type
+                        });
+
+                        imagensUploaded.name =  name_file; 
+                        imagensUploaded.url = urlDownload ;
+                    }
+
+
                     (await putItem(collection, {
                         titulo: formData.get('titulo')?.toString(),
                         nome: formData.get('nome')?.toString(),
@@ -174,9 +212,8 @@ export async function modalFormAction(formData: FormData) {
                         descricao: formData.get('descricao')?.toString(),
                         visualizacoes: parseInt(formData.get('visualizacoes')?.toString() ?? '0'),
                         link: formData.get('link')?.toString(),
-                        fotoUrl: formData.get('fotoUrl')?.toString(),
-                        fotoUrlDownload: formData.get('fotoUrlDownload')?.toString(),
-                        //ver a questão da geração desta id
+                        fotoUrl: imagensUploaded.name,
+                        fotoUrlDownload: imagensUploaded.url,
                         id: uuidv4()
                     }));
                     break;
@@ -347,69 +384,69 @@ export async function modalFormAction(formData: FormData) {
 
                     break;
                 case 'produtos':
-                    
-                //imagens 
+
+                    //imagens 
                     const imagensString = formData.get('imagens')?.toString();
                     var imagens = null;
 
-                    if(imagensString){
-                        try{
+                    if (imagensString) {
+                        try {
                             imagens = JSON.parse(imagensString);
 
-                            if(!Array.isArray(imagens)){
+                            if (!Array.isArray(imagens)) {
                                 imagens = null;
                             }
-        
-                        }catch(e){}
+
+                        } catch (e) { }
                     }
 
-                    if(imagens){
+                    if (imagens) {
                         update_data.imagens = [];
 
-                        for(let x =0; x < imagens.length; x++){
-                                     
+                        for (let x = 0; x < imagens.length; x++) {
+
                             //verifica  se é a posicao de uma imagem existente
-                            if(x <= doc_data.imagens.length-1){
+                            if (x <= doc_data.imagens.length - 1) {
                                 let img = imagens[x];
 
-                                if(img != ''){
-                                    update_data.imagens.push (doc_data.imagens.find((imagem:any)=>{
-                                       if(img == imagem.name) return true;
-                                        return false;  
+                                if (img != '') {
+                                    update_data.imagens.push(doc_data.imagens.find((imagem: any) => {
+                                        if (img == imagem.name) return true;
+                                        return false;
                                     }));
                                     continue;
                                 }
-                            
+
                             }
 
-                            const file = formData.get('imagem_'+x) as File;
+                            const file = formData.get('imagem_' + x) as File;
 
-                            if(file){
+                            if (file) {
                                 var name_file = file.name;
-                                const newDate = new Date(Timestamp.now().seconds*1000);
-                                var data_new =  newDate.toLocaleString();
-                                
+                                const newDate = new Date(Timestamp.now().seconds * 1000);
+                                var data_new = newDate.toLocaleString();
+
                                 //pega a extensao do ficheiro
-                                var extension =  name_file.substring(name_file.lastIndexOf('.'), name_file.length);
-                                
+                                var extension = name_file.substring(name_file.lastIndexOf('.'), name_file.length);
+
                                 //pega o nome real da ficheiro
                                 var real_name_file = name_file.slice(0, name_file.lastIndexOf('.'));
 
                                 //e gera o nome final
-                                name_file = real_name_file + ' '+ data_new + extension;
+                                name_file = real_name_file + ' ' + data_new + extension;
                                 name_file = name_file.replaceAll('/', '-');
                                 name_file = name_file.replaceAll("\\", '-');
 
-                               const urlDownload  = await uploadFile('produtos/'+name_file, await file.arrayBuffer(), {
+                                const urlDownload = await uploadFile('produtos/' + name_file, await file.arrayBuffer(), {
                                     contentType: file.type
-                               });
-                                
-                              update_data.imagens.push({name: name_file, url: urlDownload});
-                            }  
+                                });
+
+                                update_data.imagens.push({ name: name_file, url: urlDownload });
+                            }
                         }
                     }
-                    
-                    
+
+
                     input_update.push(
                         { key: 'nome', type: 'string' },
                         { key: 'marca', type: 'string' },
@@ -428,6 +465,33 @@ export async function modalFormAction(formData: FormData) {
                         { key: 'telefone', type: 'string' });
                     break;
                 case 'projetos':
+
+                    const file = formData.get('imagem') as File;
+
+                    if (file) {
+                        var name_file = file.name;
+                        const newDate = new Date(Timestamp.now().seconds * 1000);
+                        var data_new = newDate.toLocaleString();
+
+                        //pega a extensao do ficheiro
+                        var extension = name_file.substring(name_file.lastIndexOf('.'), name_file.length);
+
+                        //pega o nome real da ficheiro
+                        var real_name_file = name_file.slice(0, name_file.lastIndexOf('.'));
+
+                        //e gera o nome final
+                        name_file = real_name_file + ' ' + data_new + extension;
+                        name_file = name_file.replaceAll('/', '-');
+                        name_file = name_file.replaceAll("\\", '-');
+
+                        const urlDownload = await uploadFile('projectos/' + name_file, await file.arrayBuffer(), {
+                            contentType: file.type
+                        });
+
+                        update_data['fotoUrl']  =  name_file;
+                        update_data['fotoUrlDownload']  =  urlDownload;
+                    }
+
                     input_update.push(
                         { key: 'titulo', type: 'string' },
                         { key: 'nome', type: 'string' },
@@ -435,8 +499,7 @@ export async function modalFormAction(formData: FormData) {
                         { key: 'descricao', type: 'string' },
                         { key: 'visualizacoes', type: 'int' },
                         { key: 'link', type: 'string' },
-                        { key: 'fotoUrl', type: 'string' },
-                        { key: 'fotoUrlDownload', type: 'string' });
+                     );
                     break;
                 case 'sinopec_learn':
                     input_update.push(

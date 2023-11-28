@@ -13,7 +13,7 @@ import ModalContent from '@/components/Modal/Content';
 import ModalFooter from '@/components/Modal/Footer';
 import ModalInput from '@/components/Modal/Input';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 
 import { modalFormAction, deleteDocAction, deleteDocsAction } from '@/app/actions';
 import { exportDataExcel } from '@/utils/excel';
@@ -26,6 +26,58 @@ interface PlayersContentProps {
 }
 export default function PlayersContent({ players }: PlayersContentProps) {
 
+    const [pesquisa, setPesquisa] = useState('');
+    const [filtro, setFiltro] = useState('nome');
+
+    //faz o filtro de busca
+    const playersFiltrados = useMemo(()=>{
+
+        //verificar a pesquisa
+        const plys = players.filter((player)=>{
+
+            var isValid =false;
+            if(pesquisa !=  ''){
+                if ((new RegExp(pesquisa , 'i')).test(player.data.nome)){
+                    isValid=true;
+                }
+            }
+            else{
+                isValid=true;
+            }
+            return isValid;
+        });
+    
+        //verificar a categoria
+        return plys.sort((a:any, b:any)=>{
+            switch (filtro){
+                case 'nome':
+                    if(a.data.nome < b.data.nome) { return -1; }
+                    if(a.data.nome > b.data.nome) { return 1; }
+                    return 0;
+                 
+                case 'iso':
+                    if(a.data.iso < b.data.iso) { return -1; }
+                    if(a.data.iso > b.data.iso) { return 1; }
+                    return 0;
+                 
+                case 'pais':
+                    if(a.data.pais < b.data.pais) { return -1; }
+                    if(a.data.pais > b.data.pais) { return 1; }
+                    return 0;
+
+                    case 'pontos':
+                        if(a.data.pontos < b.data.pontos) { return 1; }
+                        if(a.data.pontos > b.data.pontos) { return -1; }
+                        return 0;
+         
+                default:
+                        if(a.data.nome < b.data.nome) { return -1; }
+                        if(a.data.nome > b.data.nome) { return 1; }
+                        return 0;
+            }
+        })
+
+    }, [players, filtro, pesquisa]);
 
     const [showModal, setShowModal] = useState(false);
     
@@ -109,7 +161,7 @@ export default function PlayersContent({ players }: PlayersContentProps) {
 
 
     const exportData = ()=>{
-        exportDataExcel(players.map((player)=>{
+        exportDataExcel(playersFiltrados.map((player)=>{
             return player.data;
         }), 'Jogadores do Okupalenda');
     }
@@ -122,7 +174,7 @@ export default function PlayersContent({ players }: PlayersContentProps) {
         onSelectToogleAll: selectAllToogle,
         selecteds: docsSelected,
 
-        rows: players.map((player) => {
+        rows: playersFiltrados.map((player) => {
             const data = player.data;
             return {
                 id: player.id.toString(),
@@ -141,6 +193,29 @@ export default function PlayersContent({ players }: PlayersContentProps) {
         <>
         <div className='table-area'>
             <div className='table-area-title'></div>
+            <div className='table-filtros'>
+                    <div className='table-filtros-pesquisa'>
+                        Pesquise:
+                        <input className='pesquisa-input' type="text"  placeholder='Escreve o nome do aluno...' 
+                        onChange={(ev)=>{
+                            setPesquisa(ev.target.value);
+                        }}/>
+                    </div>
+                    <div className='table-filtros-agrupar'>
+                        Agrupar por: 
+                        <select className='agrupar-input'onChange={(ev)=>{
+                            setFiltro(ev.target.value);
+                        }}>
+                            <option value='nome'>Nome</option>
+                            <option value='pais'>País</option>
+                            <option value='iso'>ISO</option>
+                            <option value='pontos'>Pontos</option>
+                 
+                        </select>
+
+                    </div>
+                
+                </div>
             <div className='table-area-header'>
             <form action={async (data: FormData) => {
                         await deleteDocsAction(data);

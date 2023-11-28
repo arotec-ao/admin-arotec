@@ -89,3 +89,46 @@ display: none;
         min-height: 750px;
     }
 }
+
+.table-filtros{
+    display: flex;
+    align-items: center;
+    gap: 20px 10px;
+    flex-wrap:wrap;
+    margin-bottom: 20px;
+    font-size: 14px;
+}
+
+.table-filtros-pesquisa{
+    display:flex;
+    align-items: center;
+    flex-wrap:wrap;
+
+    gap: 6px;
+    margin-right: 20px;
+}
+
+.pesquisa-input{
+    background-color:#eee;
+    padding: 8px  6px;
+    border-radius: 8px;
+    border: 1px solid #aaa;
+}
+
+.pesquisa-input:focus{
+    border-color:  rgb(0, 85, 255);
+}
+
+.table-filtros-agrupar{
+    display:flex;
+    align-items: center;
+    flex-wrap:wrap;
+    gap: 6px;
+
+}
+
+.agrupar-input{
+    background-color:#eee;
+    padding: 8px  6px;
+    border-radius: 8px;
+}
