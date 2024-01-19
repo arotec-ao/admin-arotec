@@ -31,6 +31,7 @@ export default function Sidebar({page, showMobile, onToogleShowSidebar}:SidebarP
                 <SidebarLinkPage title="Produtos" href="/produtos" current={ page =='produtos' ?true: false} />
                 <SidebarLinkPage title="Candidaturas" href="/candidaturas" current={ page =='candidaturas' ?true: false} />
                 <SidebarLinkPage title="Equipes (CANAR)" href="/equipes-canar" current={ page =='equipes-canar' ?true: false} />
+                <SidebarLinkPage title="Voluntários" href="/voluntarios" current={ page =='voluntarios' ?true: false} />
                 <SidebarLinkPage title="Projectos DIY" href="/projectos_diy" current={ page =='projectos_diy' ?true: false} />
                 <SidebarLinkPage title="Sinopec Learn" href="/sinopec_learn" current={ page =='sinopec_learn' ?true: false} />
                 <SidebarLinkPage title="Unitel Code" href="/unitel_code" current={ page =='unitel_code' ?true: false} />

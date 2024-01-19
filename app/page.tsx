@@ -17,6 +17,7 @@ async function getSizeColecoes() {
     produtos: await sizeCollection(getCollection('produtos')),
     candidaturas:await sizeCollection(getCollection('candidaturas')),
     equipes: await sizeCollection(getCollection('equipes')),
+    voluntarios: await sizeCollection(getCollection('voluntarios')),
     projectos_diy: await sizeCollection (getCollection('projetos')),
     sinopec_learn: await sizeCollection (getCollection('sinopec_learn')),
     unitel_code: await sizeCollection (getCollection('unitel_code')),
@@ -40,6 +41,7 @@ export default async function Home() {
                 <CardDashboard title='Produtos da Loja IO' url_view='/produtos' value={size_colecoes.produtos} />
                 <CardDashboard title='Candidaturas de Estágio' url_view='/candidaturas' value={size_colecoes.candidaturas} />
                 <CardDashboard title='Equipes do CANAR' url_view='/equipes-canar' value={size_colecoes.equipes} />
+                <CardDashboard title='Voluntários' url_view='/voluntarios' value={size_colecoes.voluntarios} />
                 <CardDashboard title='Projectos DIY' url_view='/projectos_diy' value={size_colecoes.projectos_diy} />
                 <CardDashboard title='Alunos Sinopec Learn' url_view='/sinopec_learn' value={size_colecoes.sinopec_learn} />
                 <CardDashboard title='Alunos Unitel Code' url_view='/unitel_code' value={size_colecoes.unitel_code} />

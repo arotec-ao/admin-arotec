@@ -166,6 +166,19 @@ export async function modalFormAction(formData: FormData) {
                         numElementos: 0
                     }))
                     break;
+                    case 'voluntarios':
+                        (await putItem(collection, {
+                            idade: formData.get('idade')?.toString(),
+                            participou: false,
+                            email: formData.get('email')?.toString(),
+                            nome: formData.get('nome')?.toString(),
+                            telefone: formData.get('telefone')?.toString(),
+                            interesses: formData.get('interesses')?.toString(),
+                            grau_academica: formData.get('grau_academica')?.toString(),
+                        }))
+    
+    
+                        break;
                 case 'projetos':
 
                     const imagensUploaded: {
@@ -459,10 +472,23 @@ export async function modalFormAction(formData: FormData) {
                         { key: 'quantidade', type: 'int' });
                     break;
                 case 'equipes':
-                    input_update.push({ key: 'nomeTeam', type: 'string' },
-                        { key: 'nomeInstituicao', type: 'string' },
-                        { key: 'email', type: 'string' },
-                        { key: 'telefone', type: 'string' });
+
+                input_update.push({ key: 'nome', type: 'string' },
+                { key: 'telefone', type: 'string' },
+                { key: 'email', type: 'string' },
+                { key: 'telefone', type: 'string' });
+                  
+                    break;
+
+                case 'voluntarios':
+                
+                input_update.push({ key: 'nome', type: 'string' },
+                { key: 'interesses', type: 'string' },
+                { key: 'email', type: 'string' },
+                { key: 'telefone', type: 'string' }, 
+                { key: 'grau_academica', type: 'string' }, 
+                { key: 'idade', type: 'string' }, 
+                );
                     break;
                 case 'projetos':
 
